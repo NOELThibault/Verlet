@@ -6,14 +6,17 @@ from particle import *
 pg.init()
 pg.display.set_caption( "Verlet" )
 pg.display.set_mode( ( SCREEN_WIDTH, SCREEN_HEIGHT ) )
-surface = pg.Surface( ( SCREEN_WIDTH, SCREEN_HEIGHT ) )
+screen = pg.display.get_surface()
 
 # Simulation variables
 particles = [ Particle() ]
 clock = pg.time.Clock()
-deltaTime = clock.tick()
+deltaTime = 0
 frameCount = 0
 sumFPS = 0
+
+for particle in particles :
+    particle.addForce( pg.Vector2( 0, particle.mass * g ) ) # P = mg
 
 # Main loop
 run = True
@@ -23,20 +26,21 @@ while run :
         if event.type == pg.QUIT :
             run = False
 
-    surface.fill( BLACK )
+    screen.fill( BLACK )
 
     # Time handling
-    deltaTime = clock.tick() / 1000.0 # deltaTime in seconds for computations
+    deltaTime = clock.tick() / 1000 # deltaTime in seconds for computations
+    # Don't show FPS every frame to get clearer numbers
     sumFPS += clock.get_fps()
     if frameCount % FPS_COMPUTATION_THRESHOLD == 0 :
-        fps = int( sumFPS / FPS_COMPUTATION_THRESHOLD )
+        fps = int( sumFPS / FPS_COMPUTATION_THRESHOLD ) # Average of FPS measured after last print  
         print( f"FPS : { fps }" )
         sumFPS = 0
 
     # Particle handling
     for particle in particles :
         particle.update( deltaTime )
-        particle.draw( surface )
+        particle.draw( screen )
 
     pg.display.flip()
     frameCount += 1
