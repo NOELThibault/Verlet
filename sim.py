@@ -27,6 +27,7 @@ while run :
                 run = False
             if event.key == pg.K_SPACE :
                 particles.append( Particle() )
+                print( f"New number of particles : { len( particles ) }" )
 
     screen.fill( BLACK )
     pg.draw.circle( screen, GREY, MID_SCREEN, SIMULATION_AREA )
@@ -41,11 +42,13 @@ while run :
         sumFPS = 0
 
     # Particle handling
-    for particle in particles :
-        particle.update( deltaTime )
-        for other in particles :
-            particle.collide( other )
-        particle.draw( screen )
+    subDeltaTime = deltaTime / SIMULATION_SUBSTEPS
+    for i in range( SIMULATION_SUBSTEPS ) :
+        for particle in particles :
+            particle.update( subDeltaTime )
+            for other in particles :
+                particle.collide( other )
+            particle.draw( screen )
 
     pg.display.flip()
     frameCount += 1
