@@ -1,10 +1,17 @@
+import pygame as pg
+
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
+MID_SCREEN = pg.Vector2( SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 )
 
 WHITE = ( 255, 255, 255 )
 BLACK = ( 0, 0, 0 )
+GREY = ( 100, 100, 100 )
 
 FPS_COMPUTATION_THRESHOLD = 100 # Print FPS every 100 frames
 
 g = 9.81
 SCALE = 100 # 100 pixels ~ 1 meter => 1 pixel ~ 1 cm
+
+SPAWN_OFFSET = 100
+SIMULATION_AREA = min( SCREEN_WIDTH, SCREEN_HEIGHT ) / 2

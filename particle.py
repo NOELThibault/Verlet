@@ -6,27 +6,37 @@ _SIZE = 10
 class Particle :
 
     def __init__( self ) :
-        self.pos = pg.Vector2( SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 )
+        self.pos = MID_SCREEN + pg.Vector2( SPAWN_OFFSET, 0 )
         self.prev_pos = self.pos
         self.acc = pg.Vector2( 0, 0 )
-        self.mass = 0.001 # 1 gram
+        self.mass = 0.1 # 100 grams
+
+        self.addForce( pg.Vector2( 0, self.mass * g ) ) # Always apply gravity
 
     def update( self, deltaTime ) :
         self.solveVerlet( deltaTime )
-        self.constraints()
 
     def solveVerlet( self, deltaTime ) :
         temp = self.pos
         self.pos = 2 * self.pos - self.prev_pos + self.acc * deltaTime * deltaTime * SCALE
         self.prev_pos = temp
+        # Constraint the particle to the simulation area
+        direction = self.pos - MID_SCREEN
+        dist = direction.length()
+        if dist > SIMULATION_AREA - _SIZE :
+            self.pos = MID_SCREEN + direction.normalize() * ( SIMULATION_AREA - _SIZE )
+
+    def collide( self, other ) :
+        direction = self.pos - other.pos
+        dist = direction.length()
+        collisionDist = 2 * _SIZE
+        if 0 < dist and dist < collisionDist :
+            recoil = direction.normalize() * ( collisionDist - dist ) / 2
+            self.pos += recoil
+            other.pos -= recoil
 
     def addForce( self, force ) :
         self.acc += force / self.mass
-
-    def constraints( self ) :
-        # Constraint the particle to the screen
-        self.pos = pg.Vector2( max( self.pos[ 0 ], 0 ), max( self.pos[ 1 ], 0 ) )
-        self.pos = pg.Vector2( min( self.pos[ 0 ], SCREEN_WIDTH - _SIZE / 2 ), min( self.pos[ 1 ], SCREEN_HEIGHT - _SIZE / 2 ) )
 
     def draw( self, surface ) :
         pg.draw.circle( surface, WHITE, self.pos, _SIZE )

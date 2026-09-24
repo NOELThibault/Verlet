@@ -15,9 +15,6 @@ deltaTime = 0
 frameCount = 0
 sumFPS = 0
 
-for particle in particles :
-    particle.addForce( pg.Vector2( 0, particle.mass * g ) ) # P = mg
-
 # Main loop
 run = True
 while run :
@@ -25,8 +22,14 @@ while run :
     for event in pg.event.get() :
         if event.type == pg.QUIT :
             run = False
+        if event.type == pg.KEYDOWN :
+            if event.key == pg.K_ESCAPE :
+                run = False
+            if event.key == pg.K_SPACE :
+                particles.append( Particle() )
 
     screen.fill( BLACK )
+    pg.draw.circle( screen, GREY, MID_SCREEN, SIMULATION_AREA )
 
     # Time handling
     deltaTime = clock.tick() / 1000 # deltaTime in seconds for computations
@@ -40,6 +43,8 @@ while run :
     # Particle handling
     for particle in particles :
         particle.update( deltaTime )
+        for other in particles :
+            particle.collide( other )
         particle.draw( screen )
 
     pg.display.flip()
