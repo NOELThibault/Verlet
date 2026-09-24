@@ -13,4 +13,5 @@ Todo :
 # Depedencies and running
  - Python 3
  - PyGame
+
 Simply execute sim.py in your python interpreter
